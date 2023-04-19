@@ -21,14 +21,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={roboto.className}>
-      <body>
+        <body>
         <main>
           <div id={styles["header"]}>
             <Appbar />
           </div>
           <div className={styles["container"]}>{children}</div>
         </main>
-      </body>
+        </body>
     </html>
   );
 }
