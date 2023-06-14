@@ -1,0 +1,25 @@
+@use "src/app/theme"
+
+.ticketButton
+  display: flex
+  flex-direction: row
+  justify-content: space-between
+  align-items: center
+  border-radius: theme.$max-radius
+  background-color: #ffffff
+  filter: drop-shadow(0.2rem 0.2rem 0.2rem)
+  min-width: 30rem
+  padding: 10px
+  margin: 10px
+
+  &:hover
+    cursor: pointer
+
+  .image
+    object-fit: contain
+    width: 200px
+    height: 100px
+
+  .label
+    font-size: 25px
+    font-weight: 900
