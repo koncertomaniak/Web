@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { EventItem } from "@/app/api/models/event";
 import { BaseModel } from "@/app/api/models/baseModel";
-import getConfig from "next/config";
+import { Ticket } from "@/app/api/models/ticket";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -18,5 +18,15 @@ export const getEvents = async (
     url: "/events/GetEvents",
     params: {
       page,
+    },
+  });
+
+export const getEventTickets = async (
+  eventId: string
+): Promise<AxiosResponse<BaseModel<Ticket[]>>> =>
+  baseClient.request<BaseModel<Ticket[]>>({
+    url: "/tickets/GetEventTickets",
+    params: {
+      eventId,
     },
   });

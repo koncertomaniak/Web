@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { EventItem } from "@/app/api/models/event";
 import { getEvents } from "@/app/api/client";
 import EventCard from "@/app/components/cards/EventCard";
+import EventBottomSheet from "@/app/components/cards/EventBottomSheet";
 
 const EventsView = () => {
   const [page, setPage] = useState(0);
