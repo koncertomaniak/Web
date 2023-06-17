@@ -13,20 +13,28 @@ const baseClient = axios.create({
 
 export const getEvents = async (
   page: number = 0
-): Promise<AxiosResponse<BaseModel<EventItem[]>>> =>
-  baseClient.request<BaseModel<EventItem[]>>({
-    url: "/events/GetEvents",
-    params: {
-      page,
-    },
-  });
+): Promise<AxiosResponse<BaseModel<EventItem[]>> | string> =>
+  baseClient
+    .request<BaseModel<EventItem[]>>({
+      url: "/events/GetEvents",
+      params: {
+        page,
+      },
+    })
+    .catch((err) => {
+      return err.code;
+    });
 
 export const getEventTickets = async (
   eventId: string
-): Promise<AxiosResponse<BaseModel<Ticket[]>>> =>
-  baseClient.request<BaseModel<Ticket[]>>({
-    url: "/tickets/GetEventTickets",
-    params: {
-      eventId,
-    },
-  });
+): Promise<AxiosResponse<BaseModel<Ticket[]>> | string> =>
+  baseClient
+    .request<BaseModel<Ticket[]>>({
+      url: "/tickets/GetEventTickets",
+      params: {
+        eventId,
+      },
+    })
+    .catch((err) => {
+      return err.code;
+    });

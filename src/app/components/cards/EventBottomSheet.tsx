@@ -8,10 +8,12 @@ import TicketButton from "@/app/components/buttons/TicketButton";
 import { useSpring, animated } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
 import useTriggerElement from "@/app/hooks/useTriggerElement";
+import ErrorMessageDialog from "@/app/components/dialogs/ErrorMessageDialog";
 
 const EventBottomSheet = () => {
   const [showCard, setShowCard] = useRecoilState(showMoreCardState);
   const [tickets, setTickets] = useState<Ticket[] | null>(null);
+  const [networkError, setNetworkError] = useState<string | null>(null);
   const currentEvent = useRecoilValue(currentEventCard);
   const [bottomSheet, bottomSheetBehaviour] = useSpring(() => ({
     y: window.innerHeight,
@@ -37,7 +39,22 @@ const EventBottomSheet = () => {
 
   const updateEventTickets = async () => {
     const response = await getEventTickets(currentEvent?.id!);
-    setTickets(response.data.data);
+
+    if (typeof response !== "string") {
+      if (response.data.statusCode === 200) {
+        setNetworkError(response.data.errorMessage);
+        return;
+      }
+
+      setTickets(response.data.data);
+    }
+
+    setNetworkError(response as string);
+  };
+
+  const refreshHandler = async () => {
+    setNetworkError(null);
+    await updateEventTickets();
   };
 
   useEffect(() => {
@@ -75,15 +92,24 @@ const EventBottomSheet = () => {
       >
         <div className={styles.line} {...lineDrag()}></div>
         <div className={styles.content}>
-          {/*<img src={currentEvent?.imageUrl!} className={styles.image} alt={""} loading="lazy" />*/}
-          {/*<div className={styles.description}>*/}
-          {/*  {currentEvent?.description}*/}
-          {/*</div>*/}
-          <div className={styles.tickets}>
-            {tickets?.map((item, index) => {
-              return <TicketButton key={index} item={item} />;
-            })}
-          </div>
+          {networkError ? (
+            <ErrorMessageDialog
+              errorCode={networkError}
+              refreshHandler={refreshHandler}
+            />
+          ) : (
+            <>
+              {/*<img src={currentEvent?.imageUrl!} className={styles.image} alt={""} loading="lazy" />*/}
+              {/*<div className={styles.description}>*/}
+              {/*  {currentEvent?.description}*/}
+              {/*</div>*/}
+              <div className={styles.tickets}>
+                {tickets?.map((item, index) => {
+                  return <TicketButton key={index} item={item} />;
+                })}
+              </div>
+            </>
+          )}
         </div>
       </animated.div>
     </animated.div>

@@ -1,0 +1,10 @@
+[
+  {
+    "code": "ERR_NETWORK",
+    "message": "Network error"
+  },
+  {
+    "code": "ETIMEDOUT",
+    "message": "Server timeout"
+  }
+]
