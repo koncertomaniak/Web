@@ -41,12 +41,13 @@ const EventBottomSheet = () => {
     const response = await getEventTickets(currentEvent?.id!);
 
     if (typeof response !== "string") {
-      if (response.data.statusCode === 200) {
+      if (response.data.statusCode !== 200) {
         setNetworkError(response.data.errorMessage);
         return;
       }
 
       setTickets(response.data.data);
+      return;
     }
 
     setNetworkError(response as string);
