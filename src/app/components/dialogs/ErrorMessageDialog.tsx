@@ -13,10 +13,11 @@ const ErrorMessageDialog: React.FC<ErrorMessageDialogProps> = ({
   refreshHandler,
 }) => {
   const translateErrorCode = (): string => {
+    console.log(errorCode);
     if (errorCode !== errorCode.toUpperCase()) return errorCode;
 
     const errorCodeTranslation = NetworkErrorCodes.find(
-      (x) => x.code === errorCode
+      (t) => t.code === errorCode
     );
 
     if (errorCodeTranslation == undefined) return "Couldn't connect to server";
