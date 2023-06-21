@@ -38,3 +38,19 @@ export const getEventTickets = async (
     .catch((err) => {
       return err.code;
     });
+
+export const getSearchEvents = async (
+  term: string,
+  page: number = 0
+): Promise<AxiosResponse<BaseModel<EventItem[]>> | string> =>
+  baseClient
+    .request<BaseModel<EventItem[]>>({
+      url: "/events/SearchEvents",
+      params: {
+        term,
+        page,
+      },
+    })
+    .catch((err) => {
+      return err.code;
+    });

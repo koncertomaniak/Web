@@ -10,3 +10,13 @@ export const currentEventCard = atom<EventItem | null>({
   key: "currentEventCard",
   default: null,
 });
+
+export const eventItems = atom<EventItem[] | null>({
+  key: "events",
+  default: null,
+});
+
+export const searchBoxInput = atom<string>({
+  key: "searchBoxTerm",
+  default: "",
+});

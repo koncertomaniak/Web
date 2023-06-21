@@ -22,12 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={roboto.className}>
       <body>
-        <main>
-          <div id={styles["header"]}>
-            <Appbar />
-          </div>
-          {children}
-        </main>
+        <main>{children}</main>
       </body>
     </html>
   );

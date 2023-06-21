@@ -1,20 +1,24 @@
 "use client";
 import styles from "./Events.module.sass";
 import { useEffect, useState } from "react";
-import { EventItem } from "@/app/api/models/event";
-import { getEvents } from "@/app/api/client";
+import { getEvents, getSearchEvents } from "@/app/api/client";
 import EventCard from "@/app/components/cards/EventCard";
-import EventBottomSheet from "@/app/components/cards/EventBottomSheet";
-import { type } from "os";
 import ErrorMessageDialog from "@/app/components/dialogs/ErrorMessageDialog";
+import { useRecoilValue } from "recoil";
+import { searchBoxInput } from "@/app/states";
+import { isEmpty } from "lodash";
+import { EventItem } from "@/app/api/models/event";
 
 const EventsView = () => {
   const [page, setPage] = useState(0);
-  const [events, setEvents] = useState<EventItem[] | null>(null);
+  const [events, setEvents] = useState<EventItem[]>();
+  const term = useRecoilValue(searchBoxInput);
   const [networkError, setNetworkError] = useState<string | null>(null);
 
-  const handleRequestEvents = async () => {
-    const response = await getEvents(page);
+  const handleRequestEvents = async (term: string) => {
+    const response = isEmpty(term)
+      ? await getEvents(page)
+      : await getSearchEvents(term, page);
 
     if (typeof response !== "string") {
       if (response.data.statusCode !== 200) {
@@ -31,14 +35,12 @@ const EventsView = () => {
 
   const refreshHandler = async () => {
     setNetworkError(null);
-    await handleRequestEvents();
+    await handleRequestEvents(term);
   };
 
   useEffect(() => {
-    if (events == null) {
-      (async () => await handleRequestEvents())();
-    }
-  }, [events]);
+    (async () => await handleRequestEvents(term))();
+  }, [term]);
 
   return networkError == null ? (
     <div className={styles.events}>
