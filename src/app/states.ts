@@ -20,8 +20,3 @@ export const searchBoxInput = atom<string>({
   key: "searchBoxTerm",
   default: "",
 });
-
-// export const eventsErrorNetwork = atom<string | null>({
-//   key: "eventsErrorNetwork",
-//   default: null
-// })
