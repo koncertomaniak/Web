@@ -8,14 +8,16 @@ import { useRecoilValue } from "recoil";
 import { searchBoxInput } from "@/app/states";
 import { isEmpty } from "lodash";
 import { EventItem } from "@/app/api/models/event";
+import useMatchScroll from "@/app/hooks/useMatchScroll";
 
 const EventsView = () => {
   const [page, setPage] = useState(0);
-  const [events, setEvents] = useState<EventItem[]>();
+  const [events, setEvents] = useState<EventItem[]>([]);
   const term = useRecoilValue(searchBoxInput);
   const [networkError, setNetworkError] = useState<string | null>(null);
+  const scrollMax = useMatchScroll();
 
-  const handleRequestEvents = async (term: string) => {
+  const handleRequestEvents = async () => {
     const response = isEmpty(term)
       ? await getEvents(page)
       : await getSearchEvents(term, page);
@@ -26,21 +28,28 @@ const EventsView = () => {
         return;
       }
 
-      setEvents(response.data.data);
+      setEvents(events.concat(response.data.data));
       return;
     }
-
     setNetworkError(response as string);
   };
 
   const refreshHandler = async () => {
     setNetworkError(null);
-    await handleRequestEvents(term);
+    await handleRequestEvents();
+  };
+
+  const handleScroll = () => {
+    setPage(page + 1);
   };
 
   useEffect(() => {
-    (async () => await handleRequestEvents(term))();
-  }, [term]);
+    if (scrollMax) handleScroll();
+  }, [scrollMax]);
+
+  useEffect(() => {
+    (async () => await handleRequestEvents())();
+  }, [term, page]);
 
   return networkError == null ? (
     <div className={styles.events}>
