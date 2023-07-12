@@ -6,17 +6,19 @@ import EventCard from "@/app/components/cards/EventCard";
 import ErrorMessageDialog from "@/app/components/dialogs/ErrorMessageDialog";
 import { useRecoilValue } from "recoil";
 import { searchBoxInput } from "@/app/states";
-import { isEmpty } from "lodash";
+import { isEmpty, isNull } from "lodash";
 import { EventItem } from "@/app/api/models/event";
+import useScrollEnd from "@/app/hooks/useScrollEnd";
 
 const EventsView = () => {
   const [page, setPage] = useState(0);
-  const [events, setEvents] = useState<EventItem[]>();
-  const term = useRecoilValue(searchBoxInput);
+  const [events, setEvents] = useState<EventItem[] | null>(null);
   const [networkError, setNetworkError] = useState<string | null>(null);
+  const term = useRecoilValue(searchBoxInput);
+  const scrollEnd = useScrollEnd();
 
-  const handleRequestEvents = async (term: string) => {
-    const response = isEmpty(term)
+  const handleRequestEvents = async (input: string) => {
+    const response = isEmpty(input)
       ? await getEvents(page)
       : await getSearchEvents(term, page);
 
@@ -26,21 +28,36 @@ const EventsView = () => {
         return;
       }
 
-      setEvents(response.data.data);
+      setEvents(
+        isNull(events) ? response.data.data : events!.concat(response.data.data)
+      );
       return;
     }
-
     setNetworkError(response as string);
   };
 
   const refreshHandler = async () => {
     setNetworkError(null);
+    setEvents(null);
     await handleRequestEvents(term);
   };
 
+  const handleScroll = async () => {
+    setPage(page + 1);
+  };
+
   useEffect(() => {
+    if (scrollEnd) handleScroll();
+  }, [scrollEnd]);
+
+  useEffect(() => {
+    if (events != null && !isEmpty(term)) {
+      setEvents(null);
+      setPage(0);
+      return;
+    }
     (async () => await handleRequestEvents(term))();
-  }, [term]);
+  }, [term, page]);
 
   return networkError == null ? (
     <div className={styles.events}>
