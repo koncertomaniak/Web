@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const useMatchScroll = () => {
+const useScrollEnd = () => {
   const [heightMatches, setHeightMatches] = useState(false);
 
   useEffect(() => {
@@ -22,4 +22,4 @@ const useMatchScroll = () => {
   return heightMatches;
 };
 
-export default useMatchScroll;
+export default useScrollEnd;
